@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.praktikumpertama.data.AppDatabase
 import com.example.praktikumpertama.data.DataEntity
+import com.example.praktikumpertama.data.ProfileEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -13,6 +14,19 @@ import kotlinx.coroutines.withContext
 class DataViewModel(application: Application) : AndroidViewModel(application) {
     private val dao = AppDatabase.getDatabase(application).dataDao()
     val dataList: LiveData<List<DataEntity>> = dao.getAll()
+    private val profileDao = AppDatabase.getDatabase(application).profileDao()
+    val profile: LiveData<ProfileEntity> = profileDao.getProfile()
+
+    fun updateProfile(name: String, id: String, email: String) {
+        viewModelScope.launch {
+            val newProfile = ProfileEntity(
+                studentName = name,
+                studentId = id,
+                studentEmail = email
+            )
+            profileDao.insertOrUpdate(newProfile)
+        }
+    }
 
     fun insertData(
         kodeProvinsi: String,

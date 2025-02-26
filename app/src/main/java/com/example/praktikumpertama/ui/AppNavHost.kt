@@ -14,8 +14,6 @@ import androidx.navigation.navArgument
 import com.example.praktikumpertama.ui.theme.BottomBar
 import com.example.praktikumpertama.viewmodel.DataViewModel
 import kotlinx.coroutines.delay
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.Modifier
 
 @Composable
@@ -40,7 +38,7 @@ fun AppNavHost(viewModel: DataViewModel) {
                 DataEntryScreen(navController = navController, viewModel = viewModel)
             }
             composable("profile") {
-                ProfileScreen(navController = navController)
+                ProfileScreen(navController = navController, viewModel = viewModel)
             }
             composable("list") {
                 DataListScreen(navController = navController, viewModel = viewModel)
@@ -67,3 +65,4 @@ fun AppNavHost(viewModel: DataViewModel) {
         }
     }
 }
+

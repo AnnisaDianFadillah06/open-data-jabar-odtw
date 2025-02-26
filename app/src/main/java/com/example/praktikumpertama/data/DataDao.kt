@@ -21,3 +21,13 @@ interface DataDao {
     @Query("DELETE FROM data_table WHERE id = :dataId")
     suspend fun deleteById(dataId: Int) //
 }
+@Dao
+interface ProfileDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrUpdate(profile: ProfileEntity)
+
+    @Query("SELECT * FROM profile_table WHERE id = 1")
+    fun getProfile(): LiveData<ProfileEntity>
+
+}

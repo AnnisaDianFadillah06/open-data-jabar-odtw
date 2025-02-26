@@ -8,19 +8,31 @@ import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.praktikumpertama.viewmodel.DataViewModel
 
 @Composable
-fun ProfileScreen(navController: NavHostController) {
+fun ProfileScreen(navController: NavHostController, viewModel: DataViewModel) {
+    val profile by viewModel.profile.observeAsState()
+
     var isEditing by remember { mutableStateOf(false) }
-    var studentName by remember { mutableStateOf("Annisa Dian Fadillah") }
-    var studentId by remember { mutableStateOf("231511004") }
-    var studentEmail by remember { mutableStateOf("mahasiswa@jtk.polban.ac.id") }
+    var studentName by remember { mutableStateOf(profile?.studentName ?: "") }
+    var studentId by remember { mutableStateOf(profile?.studentId ?: "") }
+    var studentEmail by remember { mutableStateOf(profile?.studentEmail ?: "") }
     var profileUploaded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(profile) {
+        profile?.let {
+            studentName = it.studentName
+            studentId = it.studentId
+            studentEmail = it.studentEmail
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -73,15 +85,10 @@ fun ProfileScreen(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = { profileUploaded = true },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Upload Photo")
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = { isEditing = false },
+                    onClick = {
+                        viewModel.updateProfile(studentName, studentId, studentEmail)
+                        isEditing = false
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Save")
@@ -114,3 +121,4 @@ fun ProfileScreen(navController: NavHostController) {
         }
     }
 }
+
