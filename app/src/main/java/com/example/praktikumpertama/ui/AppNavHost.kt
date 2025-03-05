@@ -24,16 +24,19 @@ fun AppNavHost(viewModel: DataViewModel) {
 
     Scaffold(
         bottomBar = {
-            if (currentRoute != null && !currentRoute.startsWith("hapus")) {
+            if (currentRoute != null && !currentRoute.startsWith("hapus") && !currentRoute.startsWith("splash")) {
                 BottomBar(navController)
             }
         }
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "form",
+            startDestination = "splash", // Awali dengan Splash Screen
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable("splash") {
+                SplashScreen(navController = navController)
+            }
             composable("form") {
                 DataEntryScreen(navController = navController, viewModel = viewModel)
             }
