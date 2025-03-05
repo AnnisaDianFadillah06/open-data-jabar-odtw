@@ -14,7 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.praktikumpertama.ui.themejetsnack.JetsnackTheme
 import com.example.praktikumpertama.viewmodel.DataViewModel
+import com.example.praktikumpertama.ui.components.JetsnackButton
 
 @Composable
 fun ProfileScreen(navController: NavHostController, viewModel: DataViewModel) {
@@ -84,7 +86,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: DataViewModel) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Button(
+                JetsnackTheme { JetsnackButton(
                     onClick = {
                         viewModel.updateProfile(studentName, studentId, studentEmail)
                         isEditing = false
@@ -92,7 +94,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: DataViewModel) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Save")
-                }
+                }}
             } else {
                 Text(text = studentName, style = MaterialTheme.typography.headlineSmall)
                 Spacer(modifier = Modifier.height(8.dp))
@@ -101,23 +103,23 @@ fun ProfileScreen(navController: NavHostController, viewModel: DataViewModel) {
                 Text(text = studentEmail, style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Button(
+                JetsnackTheme { JetsnackButton(
                     onClick = { isEditing = true },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Edit Profile")
-                }
+                }}
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Tombol kembali
-            Button(
+            JetsnackTheme { JetsnackButton(
                 onClick = { navController.popBackStack() },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Back")
-            }
+            }}
         }
     }
 }

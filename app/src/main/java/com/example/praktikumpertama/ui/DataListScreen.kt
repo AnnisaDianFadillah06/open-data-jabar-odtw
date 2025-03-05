@@ -21,6 +21,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.praktikumpertama.viewmodel.DataViewModel
+import com.example.praktikumpertama.ui.themejetsnack.JetsnackTheme
+import com.example.praktikumpertama.ui.components.JetsnackButton
+import com.example.praktikumpertama.ui.components.JetsnackCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,13 +78,13 @@ fun DataListScreen(navController: NavHostController, viewModel: DataViewModel) {
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Button(onClick = { isBottomSheetVisible = true }) {
+            JetsnackTheme { JetsnackButton(onClick = { isBottomSheetVisible = true }) {
                 Text(text = "Tahun: ${selectedYear ?: "Semua"}")
-            }
+            }}
 
-            Button(onClick = { /* Tambahkan logika untuk sorting */ }) {
+            JetsnackTheme { JetsnackButton(onClick = { /* Tambahkan logika untuk sorting */ }) {
                 Text(text = "Sort")
-            }
+            }}
         }
 
         // **3️⃣ Bottom Sheet untuk Filter Tahun**
@@ -102,7 +105,7 @@ fun DataListScreen(navController: NavHostController, viewModel: DataViewModel) {
                     )
 
                     availableYears.forEach { year ->
-                        Button(
+                        JetsnackTheme { JetsnackButton(
                             onClick = {
                                 selectedYear = year
                                 isBottomSheetVisible = false
@@ -110,10 +113,10 @@ fun DataListScreen(navController: NavHostController, viewModel: DataViewModel) {
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(text = year.toString())
-                        }
+                        }}
                     }
 
-                    Button(
+                    JetsnackTheme { JetsnackButton(
                         onClick = {
                             selectedYear = null
                             isBottomSheetVisible = false
@@ -121,7 +124,7 @@ fun DataListScreen(navController: NavHostController, viewModel: DataViewModel) {
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(text = "Semua Tahun")
-                    }
+                    }}
                 }
             }
         }
@@ -141,9 +144,9 @@ fun DataListScreen(navController: NavHostController, viewModel: DataViewModel) {
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(filteredList) { item ->
-                    Card(
+                    JetsnackTheme { JetsnackCard(
                         shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                        elevation = 8.dp,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(
@@ -177,27 +180,27 @@ fun DataListScreen(navController: NavHostController, viewModel: DataViewModel) {
                                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Button(
+                                JetsnackTheme { JetsnackButton(
                                     onClick = {
                                         navController.navigate("edit/${item.id}")
                                     },
                                     shape = RoundedCornerShape(8.dp)
                                 ) {
                                     Text(text = "Edit")
-                                }
+                                }}
 
-                                Button(
+                                JetsnackTheme { JetsnackButton(
                                     onClick = {
                                         navController.navigate("hapus/${item.id}") // Navigasi ke rute hapus
                                     },
                                     shape = RoundedCornerShape(8.dp)
                                 ) {
                                     Text(text = "Hapus")
-                                }
+                                }}
                             }
                         }
                     }
-                }
+                }}
             }
         }
     }
