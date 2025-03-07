@@ -23,11 +23,17 @@ interface DataDao {
 }
 @Dao
 interface ProfileDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdate(profile: ProfileEntity)
 
-    @Query("SELECT * FROM profile_table WHERE id = 1")
-    fun getProfile(): LiveData<ProfileEntity>
+    @Query("SELECT * FROM profile_table WHERE id = 1 LIMIT 1")
+    suspend fun getProfileNow(): ProfileEntity?
 
+    @Query("SELECT * FROM profile_table WHERE id = 1 LIMIT 1")
+    fun getProfile(): LiveData<ProfileEntity?>
+
+
+    @Query("UPDATE profile_table SET photoUri = :photoUri WHERE id = 1")
+    suspend fun updatePhoto(photoUri: String)
 }
+

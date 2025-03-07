@@ -18,9 +18,11 @@ data class DataEntity(
 
 @Entity(tableName = "profile_table")
 data class ProfileEntity(
-    @PrimaryKey(autoGenerate = false) // Hanya ada satu profil pengguna
-    val id: Int = 1, // Default ID untuk profil
+    @PrimaryKey(autoGenerate = false)
+    val id: Int = 1, // Hanya ada satu profil pengguna
     val studentName: String,
     val studentId: String,
-    val studentEmail: String
+    val studentEmail: String,
+    val photoUri: String? = null // Menyimpan URI gambar
 )
+
