@@ -46,6 +46,9 @@ fun AppNavHost(viewModel: DataViewModel) {
             composable("list") {
                 DataListScreen(navController = navController, viewModel = viewModel)
             }
+            composable("lihat") {
+                DataAPIScreen(navController = navController, viewModel = viewModel)
+            }
             composable(
                 route = "edit/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.IntType })

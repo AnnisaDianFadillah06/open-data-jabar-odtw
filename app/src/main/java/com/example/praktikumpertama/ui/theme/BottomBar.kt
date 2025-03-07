@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Star
 
 @Composable
 fun BottomBar(navController: NavController) {
@@ -17,7 +18,8 @@ fun BottomBar(navController: NavController) {
         val items = listOf(
             BottomNavItem("form", Icons.Default.Add, "Form"),
             BottomNavItem("profile", Icons.Default.AccountCircle, "Profile"),
-            BottomNavItem("list", Icons.Default.List, "List")
+            BottomNavItem("list", Icons.Default.List, "List") ,
+            BottomNavItem("lihat", Icons.Default.Star, "API")
         )
 
         items.forEach { item ->

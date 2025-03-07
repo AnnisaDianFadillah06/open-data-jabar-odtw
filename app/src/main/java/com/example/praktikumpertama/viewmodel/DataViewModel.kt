@@ -2,22 +2,59 @@ package com.example.praktikumpertama.viewmodel
 
 import android.app.Application
 import android.graphics.Bitmap
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.praktikumpertama.data.AppDatabase
 import com.example.praktikumpertama.data.DataEntity
 import com.example.praktikumpertama.data.ProfileEntity
+import com.example.praktikumpertama.repository.WisataRepository
 import com.example.praktikumpertama.utils.FileUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.await
+import androidx.compose.runtime.State
+import com.example.praktikumpertama.model.WisataData
+
 
 class DataViewModel(application: Application) : AndroidViewModel(application) {
     private val dao = AppDatabase.getDatabase(application).dataDao()
     val dataList: LiveData<List<DataEntity>> = dao.getAll()
     private val profileDao = AppDatabase.getDatabase(application).profileDao()
     val profile: LiveData<ProfileEntity?> = profileDao.getProfile()
+
+    private val repository = WisataRepository()
+
+    private val _wisataList = mutableStateOf<List<WisataData>>(emptyList())
+    val wisataList: State<List<WisataData>> get() = _wisataList
+
+    fun fetchWisataList() {
+        viewModelScope.launch {
+            try {
+                val response = repository.getWisataList().await()
+                if (response.error == 0) {
+                    _wisataList.value = response.data.map { apiData ->
+                        WisataData(
+                            id = apiData.id,
+                            kode_provinsi = apiData.kode_provinsi,
+                            nama_provinsi = apiData.nama_provinsi,
+                            kode_kabupaten_kota = apiData.kode_kabupaten_kota,
+                            nama_kabupaten_kota = apiData.nama_kabupaten_kota,
+                            jenis_odtw = apiData.jenis_odtw,
+                            jumlah_odtw = apiData.jumlah_odtw,
+                            satuan = apiData.satuan,
+                            tahun = apiData.tahun
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 
     fun updateProfile(name: String, id: String, email: String, bitmap: Bitmap?) {
         viewModelScope.launch {
