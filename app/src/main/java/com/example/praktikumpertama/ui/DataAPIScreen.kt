@@ -48,7 +48,7 @@ fun WisataItem(wisata: WisataData) {
             .padding(8.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Kota: ${wisata.nama_provinsi}", style = MaterialTheme.typography.bodyLarge)
+            Text(text = "Kota: ${wisata.nama_kabupaten_kota}", style = MaterialTheme.typography.bodyLarge)
             Text(text = "Jenis: ${wisata.jenis_odtw}", style = MaterialTheme.typography.bodyMedium)
             Text(text = "Jumlah: ${wisata.jumlah_odtw} ${wisata.satuan}", style = MaterialTheme.typography.bodyMedium)
             Text(text = "Tahun: ${wisata.tahun}", style = MaterialTheme.typography.bodyMedium)
