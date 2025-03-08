@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Star
 
@@ -20,7 +21,8 @@ fun BottomBar(navController: NavController) {
             BottomNavItem("profile", Icons.Default.AccountCircle, "Profile"),
             BottomNavItem("list", Icons.Default.List, "List") ,
             BottomNavItem("lihat", Icons.Default.Star, "API"),
-            BottomNavItem("home", Icons.Default.Home, "Home")
+            BottomNavItem("home", Icons.Default.Home, "Home"),
+            BottomNavItem("bookmark", Icons.Default.Favorite, "Favorite")
         )
 
         items.forEach { item ->

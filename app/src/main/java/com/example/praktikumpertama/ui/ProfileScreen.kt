@@ -57,8 +57,6 @@ fun ProfileScreen(navController: NavHostController, viewModel: DataViewModel) {
         }
     }
 
-
-
     LaunchedEffect(profile) {
         profile?.let {
             studentName = it.studentName
@@ -67,7 +65,6 @@ fun ProfileScreen(navController: NavHostController, viewModel: DataViewModel) {
             photoUri = it.photoUri ?: "" // Pastikan photoUri selalu diupdate
         }
     }
-
 
     Box(
         modifier = Modifier
@@ -157,9 +154,9 @@ fun ProfileScreen(navController: NavHostController, viewModel: DataViewModel) {
             } else {
                 Text(text = studentName, style = MaterialTheme.typography.headlineSmall)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "ID: $studentId", style = MaterialTheme.typography.bodyLarge)
+                Text(text = "NIM: $studentId", style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = studentEmail, style = MaterialTheme.typography.bodyLarge)
+                Text(text = "Email: $studentEmail", style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
@@ -182,5 +179,3 @@ fun ProfileScreen(navController: NavHostController, viewModel: DataViewModel) {
         }
     }
 }
-
-

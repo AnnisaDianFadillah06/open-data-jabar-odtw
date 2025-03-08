@@ -17,6 +17,10 @@ import kotlinx.coroutines.withContext
 import retrofit2.await
 import androidx.compose.runtime.State
 import com.example.praktikumpertama.model.WisataData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 
 
 class DataViewModel(application: Application) : AndroidViewModel(application) {
@@ -30,8 +34,15 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
     private val _wisataList = mutableStateOf<List<WisataData>>(emptyList())
     val wisataList: State<List<WisataData>> get() = _wisataList
 
+    var isLoading = mutableStateOf(false)
+        private set
+
+    private val _bookmarkedItems = MutableStateFlow<List<WisataData>>(emptyList())
+    val bookmarkedItems: StateFlow<List<WisataData>> = _bookmarkedItems
+
     fun fetchWisataList() {
         viewModelScope.launch {
+            isLoading.value = true // Mulai loading
             try {
                 val response = repository.getWisataList().await()
                 if (response.error == 0) {
@@ -52,9 +63,9 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+            isLoading.value = false // Selesai loading
         }
     }
-
 
     fun updateProfile(name: String, id: String, email: String, bitmap: Bitmap?) {
         viewModelScope.launch {
@@ -77,14 +88,11 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
-
-
     fun updatePhoto(photoUri: String) {
-            viewModelScope.launch {
-                profileDao.updatePhoto(photoUri)
-            }
+        viewModelScope.launch {
+            profileDao.updatePhoto(photoUri)
         }
-
+    }
 
 
     fun insertData(
@@ -129,6 +137,18 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             dao.deleteById(id)
         }
+    }
+
+    fun toggleFavorite(wisata: WisataData) {
+        if (_bookmarkedItems.value.contains(wisata)) {
+            _bookmarkedItems.value = _bookmarkedItems.value - wisata
+        } else {
+            _bookmarkedItems.value = _bookmarkedItems.value + wisata
+        }
+    }
+
+    fun isFavorite(wisata: WisataData): Flow<Boolean> {
+        return _bookmarkedItems.map { it.contains(wisata) }
     }
 
 }

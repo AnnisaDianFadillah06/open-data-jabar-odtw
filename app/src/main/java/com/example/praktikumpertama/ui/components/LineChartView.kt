@@ -35,12 +35,15 @@ fun LineChartView(dataList: List<DataEntity>) {
                     granularity = 1f
                     textSize = 12f
                     labelRotationAngle = -45f  // Putar label agar lebih terbaca
+                    textColor = android.graphics.Color.WHITE // Warna teks sumbu X menjadi putih
+                    textSize = 12f // Ukuran teks agar lebih nyaman dibaca
                 }
 
                 // Konfigurasi Sumbu Y
                 axisLeft.apply {
                     setDrawGridLines(true)
-                    textSize = 12f
+                    textColor = android.graphics.Color.WHITE // Warna teks sumbu X menjadi putih
+                    textSize = 12f // Ukuran teks agar lebih nyaman dibaca
                 }
 
                 axisRight.isEnabled = false  // Matikan sumbu kanan
@@ -63,25 +66,32 @@ fun LineChartView(dataList: List<DataEntity>) {
             )
 
             val lineDataSet = LineDataSet(entries, "Total Populasi").apply {
-                valueTextColor = Color.White.toArgb()
+                valueTextColor = android.graphics.Color.WHITE // Warna teks sumbu X menjadi puti
                 lineWidth = 2f
                 setDrawValues(true) // Tampilkan angka di atas titik data
                 setCircleColors(colors) // Warna lingkaran berbeda
                 setDrawCircleHole(false)
                 setDrawFilled(true)
-                fillColor = Color.LightGray.toArgb()
+                fillColor = android.graphics.Color.WHITE // Warna teks sumbu X menjadi puti
+                valueTextColor = android.graphics.Color.WHITE // Warna teks angka menjadi putih
+                valueTextSize = 12f // Ukuran teks lebih nyaman dibaca
             }
 
             val lineData = LineData(lineDataSet)
             chart.data = lineData
 
-            // **Tambahkan label sumbu X berdasarkan nama provinsi**
-            chart.xAxis.valueFormatter = object : com.github.mikephil.charting.formatter.ValueFormatter() {
-                override fun getFormattedValue(value: Float): String {
-                    return dataList.getOrNull(value.toInt())?.namaProvinsi ?: "" // Ambil nama provinsi
+            chart.xAxis.apply {
+                valueFormatter = object : com.github.mikephil.charting.formatter.ValueFormatter() {
+                    override fun getFormattedValue(value: Float): String {
+                        return dataList.getOrNull(value.toInt())?.namaProvinsi ?: "" // Ambil nama provinsi
+                    }
                 }
-            }
 
+                textColor = android.graphics.Color.WHITE // Warna teks sumbu X menjadi putih
+                textSize = 12f // Ukuran teks agar lebih nyaman dibaca
+                position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM // Letakkan di bawah
+                setDrawGridLines(false) // Nonaktifkan grid garis jika terlalu mengganggu
+            }
             chart.invalidate() // Refresh chart setelah update
         }
     )

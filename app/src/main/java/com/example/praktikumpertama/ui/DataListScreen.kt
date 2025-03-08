@@ -21,10 +21,12 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.sp
 import com.example.praktikumpertama.viewmodel.DataViewModel
 import com.example.praktikumpertama.ui.themejetsnack.JetsnackTheme
 import com.example.praktikumpertama.ui.components.JetsnackButton
 import com.example.praktikumpertama.ui.components.JetsnackCard
+import com.example.praktikumpertama.ui.themejetsnack.Ocean0
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,6 +58,7 @@ fun DataListScreen(navController: NavHostController, viewModel: DataViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp), // Menambahkan margin antar tombol
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = { navController.popBackStack() }) {
@@ -85,7 +88,12 @@ fun DataListScreen(navController: NavHostController, viewModel: DataViewModel) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 JetsnackTheme {
-                    JetsnackButton(onClick = { isBottomSheetVisible = true }) {
+                    JetsnackButton(
+                        onClick = { isBottomSheetVisible = true },
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .defaultMinSize(minWidth = 0.dp) // Mencegah tombol menjadi terlalu lebar
+                    ) {
                         Text(text = "Tahun: ${selectedYear ?: "Semua"}")
                     }
                 }
@@ -165,7 +173,8 @@ fun DataListScreen(navController: NavHostController, viewModel: DataViewModel) {
                             JetsnackCard(
                                 shape = RoundedCornerShape(12.dp),
                                 elevation = 8.dp,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
+                                color = JetsnackTheme.colors.uiBackground
                             ) {
                                 Column(
                                     modifier = Modifier
@@ -209,16 +218,54 @@ fun DataListScreen(navController: NavHostController, viewModel: DataViewModel) {
                                             }
                                         }
 
+                                        var showDialog by remember { mutableStateOf(false) }
+
                                         JetsnackTheme {
                                             JetsnackButton(
-                                                onClick = {
-                                                    navController.navigate("hapus/${item.id}")
-                                                },
+                                                onClick = { showDialog = true }, // Menampilkan dialog konfirmasi
                                                 shape = RoundedCornerShape(8.dp)
                                             ) {
                                                 Text(text = "Hapus")
                                             }
                                         }
+                                        if (showDialog) {
+                                            JetsnackTheme { // Tambahkan tema ke dalam AlertDialog
+                                                AlertDialog(
+                                                    onDismissRequest = { showDialog = false },
+                                                    title = {
+                                                        Text(
+                                                            text = "Konfirmasi Hapus",
+                                                            fontSize = 18.sp,
+                                                            fontWeight = FontWeight.Bold// Tambahkan warna untuk memastikan teks terlihat
+                                                        )
+                                                    },
+                                                    text = {
+                                                        Text(
+                                                            text = "Apakah Anda yakin ingin menghapus item ini?",
+                                                            fontSize = 16.sp
+                                                        )
+                                                    },
+                                                    confirmButton = {
+                                                        JetsnackButton(
+                                                            onClick = {
+                                                                showDialog = false
+                                                                navController.navigate("hapus/${item.id}")
+                                                            }
+                                                        ) {
+                                                            Text(text = "Ya")
+                                                        }
+                                                    },
+                                                    dismissButton = {
+                                                        JetsnackButton(
+                                                            onClick = { showDialog = false }
+                                                        ) {
+                                                            Text(text = "Batal")
+                                                        }
+                                                    }
+                                                )
+                                            }
+                                        }
+
                                     }
                                 }
                             }

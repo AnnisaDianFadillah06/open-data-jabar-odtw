@@ -24,7 +24,7 @@ fun AppNavHost(viewModel: DataViewModel) {
 
     Scaffold(
         bottomBar = {
-            if (currentRoute != null && !currentRoute.startsWith("hapus") && !currentRoute.startsWith("splash")) {
+            if (currentRoute != null && !currentRoute.startsWith("onboarding") && !currentRoute.startsWith("hapus") && !currentRoute.startsWith("splash")) {
                 BottomBar(navController)
             }
         }
@@ -37,6 +37,11 @@ fun AppNavHost(viewModel: DataViewModel) {
             composable("splash") {
                 SplashScreen(navController = navController)
             }
+            composable("onboarding") { OnboardingScreen {
+                navController.navigate("home") {
+                    popUpTo("onboarding") { inclusive = true } // Hapus OnboardingScreen dari tumpukan navigasi
+                }
+            } }
             composable("tambah") {
                 DataEntryScreen(navController = navController, viewModel = viewModel)
             }
@@ -51,6 +56,9 @@ fun AppNavHost(viewModel: DataViewModel) {
             }
             composable("home") {
                 HomeScreen(navController = navController, viewModel = viewModel)
+            }
+            composable("bookmark") {
+                BookmarkScreen(navController = navController, viewModel = viewModel)
             }
             composable(
                 route = "edit/{id}",

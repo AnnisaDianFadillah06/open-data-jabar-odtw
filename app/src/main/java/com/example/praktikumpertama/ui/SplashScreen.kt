@@ -19,8 +19,8 @@ fun SplashScreen(navController: NavController) {
     // Efek delay sebelum pindah ke home
     LaunchedEffect(Unit) {
         delay(5000) // Tampilkan selama 2 detik
-        navController.navigate("home") {
-            popUpTo("splash") { inclusive = true } // Hapus splash dari back stack
+        navController.navigate("onboarding") {
+            popUpTo("splash") { inclusive = true } // Hapus SplashScreen dari tumpukan navigasi
         }
     }
 
