@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -32,6 +33,7 @@ fun DataListScreen(navController: NavHostController, viewModel: DataViewModel) {
     var searchQuery by remember { mutableStateOf("") }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedYear by remember { mutableStateOf<Int?>(null) }
+    var isAscending by remember { mutableStateOf(true) } // 🔥 Tambahan untuk Sort
 
     val filteredList = dataList
         .filter { item ->
@@ -41,167 +43,201 @@ fun DataListScreen(navController: NavHostController, viewModel: DataViewModel) {
         .filter { item ->
             selectedYear == null || item.tahun == selectedYear
         }
+        .let { list ->
+            if (isAscending) list.sortedBy { it.total } else list.sortedByDescending { it.total }
+        } // 🔥 Sorting Berdasarkan Total
 
-    val availableYears = dataList.map { it.tahun }.distinct().sortedDescending() // Ambil semua tahun unik
+    val availableYears = dataList.map { it.tahun }.distinct().sortedDescending()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        // **1️⃣ Row Search Bar & Back Button**
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { navController.popBackStack() }) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Kembali")
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // **1️⃣ Row Search Bar & Back Button**
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Kembali")
+                }
+
+                TextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 8.dp),
+                    placeholder = { Text("Cari data...") },
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp)
+                )
             }
 
-            TextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
+            // **2️⃣ Row untuk Filter dan Sort**
+            Row(
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 8.dp),
-                placeholder = { Text("Cari data...") },
-                leadingIcon = {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
-                },
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp)
-            )
-        }
-
-        // **2️⃣ Row untuk Filter**
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            JetsnackTheme { JetsnackButton(onClick = { isBottomSheetVisible = true }) {
-                Text(text = "Tahun: ${selectedYear ?: "Semua"}")
-            }}
-
-            JetsnackTheme { JetsnackButton(onClick = { /* Tambahkan logika untuk sorting */ }) {
-                Text(text = "Sort")
-            }}
-        }
-
-        // **3️⃣ Bottom Sheet untuk Filter Tahun**
-        if (isBottomSheetVisible) {
-            ModalBottomSheet(
-                onDismissRequest = { isBottomSheetVisible = false }
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = "Pilih Tahun",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-
-                    availableYears.forEach { year ->
-                        JetsnackTheme { JetsnackButton(
-                            onClick = {
-                                selectedYear = year
-                                isBottomSheetVisible = false
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(text = year.toString())
-                        }}
+                JetsnackTheme {
+                    JetsnackButton(onClick = { isBottomSheetVisible = true }) {
+                        Text(text = "Tahun: ${selectedYear ?: "Semua"}")
                     }
+                }
 
-                    JetsnackTheme { JetsnackButton(
-                        onClick = {
-                            selectedYear = null
-                            isBottomSheetVisible = false
-                        },
-                        modifier = Modifier.fillMaxWidth()
+                JetsnackTheme {
+                    JetsnackButton(
+                        onClick = { isAscending = !isAscending }, // 🔥 Toggle Sorting
+                        modifier = Modifier.padding(start = 8.dp)
                     ) {
-                        Text(text = "Semua Tahun")
-                    }}
+                        Text(text = "Sort: ${if (isAscending) "Asc" else "Desc"}")
+                    }
+                }
+            }
+
+            // **3️⃣ Bottom Sheet untuk Filter Tahun**
+            if (isBottomSheetVisible) {
+                ModalBottomSheet(
+                    onDismissRequest = { isBottomSheetVisible = false }
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Pilih Tahun",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 12.dp)
+                        )
+
+                        availableYears.forEach { year ->
+                            JetsnackTheme {
+                                JetsnackButton(
+                                    onClick = {
+                                        selectedYear = year
+                                        isBottomSheetVisible = false
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(text = year.toString())
+                                }
+                            }
+                        }
+
+                        JetsnackTheme {
+                            JetsnackButton(
+                                onClick = {
+                                    selectedYear = null
+                                    isBottomSheetVisible = false
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(text = "Semua Tahun")
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (filteredList.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "No Data Available", style = MaterialTheme.typography.headlineMedium)
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(filteredList) { item ->
+                        JetsnackTheme {
+                            JetsnackCard(
+                                shape = RoundedCornerShape(12.dp),
+                                elevation = 8.dp,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .background(MaterialTheme.colorScheme.surface)
+                                        .padding(16.dp)
+                                ) {
+                                    Text(
+                                        text = "Provinsi: ${item.namaProvinsi} (${item.kodeProvinsi})",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "Kabupaten/Kota: ${item.namaKabupatenKota} (${item.kodeKabupatenKota})",
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "Total: ${item.total} ${item.satuan}",
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "Tahun: ${item.tahun}",
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        JetsnackTheme {
+                                            JetsnackButton(
+                                                onClick = {
+                                                    navController.navigate("edit/${item.id}")
+                                                },
+                                                shape = RoundedCornerShape(8.dp)
+                                            ) {
+                                                Text(text = "Edit")
+                                            }
+                                        }
+
+                                        JetsnackTheme {
+                                            JetsnackButton(
+                                                onClick = {
+                                                    navController.navigate("hapus/${item.id}")
+                                                },
+                                                shape = RoundedCornerShape(8.dp)
+                                            ) {
+                                                Text(text = "Hapus")
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
 
-        if (filteredList.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "No Data Available", style = MaterialTheme.typography.headlineMedium)
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(filteredList) { item ->
-                    JetsnackTheme { JetsnackCard(
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = 8.dp,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .background(MaterialTheme.colorScheme.surface)
-                                .padding(16.dp)
-                        ) {
-                            Text(
-                                text = "Provinsi: ${item.namaProvinsi} (${item.kodeProvinsi})",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Kabupaten/Kota: ${item.namaKabupatenKota} (${item.kodeKabupatenKota})",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Total: ${item.total} ${item.satuan}",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Tahun: ${item.tahun}",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                JetsnackTheme { JetsnackButton(
-                                    onClick = {
-                                        navController.navigate("edit/${item.id}")
-                                    },
-                                    shape = RoundedCornerShape(8.dp)
-                                ) {
-                                    Text(text = "Edit")
-                                }}
-
-                                JetsnackTheme { JetsnackButton(
-                                    onClick = {
-                                        navController.navigate("hapus/${item.id}") // Navigasi ke rute hapus
-                                    },
-                                    shape = RoundedCornerShape(8.dp)
-                                ) {
-                                    Text(text = "Hapus")
-                                }}
-                            }
-                        }
-                    }
-                }}
-            }
+        // **4️⃣ Floating Action Button (FAB)**
+        FloatingActionButton(
+            onClick = { navController.navigate("tambah") },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            shape = RoundedCornerShape(50),
+            containerColor = MaterialTheme.colorScheme.primary
+        ) {
+            Icon(imageVector = Icons.Default.Add, contentDescription = "Tambah Data")
         }
     }
 }

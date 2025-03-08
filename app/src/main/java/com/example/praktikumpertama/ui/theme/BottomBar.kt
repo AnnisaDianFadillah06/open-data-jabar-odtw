@@ -17,7 +17,6 @@ fun BottomBar(navController: NavController) {
         val currentRoute = navController.currentDestination?.route
 
         val items = listOf(
-            BottomNavItem("form", Icons.Default.Add, "Form"),
             BottomNavItem("profile", Icons.Default.AccountCircle, "Profile"),
             BottomNavItem("list", Icons.Default.List, "List") ,
             BottomNavItem("lihat", Icons.Default.Star, "API"),

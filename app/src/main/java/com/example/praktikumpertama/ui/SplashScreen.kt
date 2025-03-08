@@ -1,40 +1,42 @@
 package com.example.praktikumpertama.ui
 
-import androidx.compose.foundation.Image
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.*
+import androidx.compose.ui.unit.*
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
+import com.airbnb.lottie.compose.*
 import com.example.praktikumpertama.R
+import com.example.praktikumpertama.R.raw.splashlogo
 
 @Composable
 fun SplashScreen(navController: NavController) {
-    // Efek delay sebelum pindah ke screen utama
+    // Efek delay sebelum pindah ke home
     LaunchedEffect(Unit) {
-        delay(3000) // Tampilkan selama 3 detik
-        navController.navigate("form") {
+        delay(5000) // Tampilkan selama 2 detik
+        navController.navigate("home") {
             popUpTo("splash") { inclusive = true } // Hapus splash dari back stack
         }
     }
 
-    // UI Splash Screen
+    // Animasi Lottie
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(splashlogo))
+    val progress by animateLottieCompositionAsState(composition)
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.logo), // Ganti dengan logo aplikasi
-            contentDescription = "Logo",
-            modifier = Modifier.size(150.dp)
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.size(200.dp) // Sesuaikan ukuran logo
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -57,6 +59,13 @@ fun SplashScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(70.dp))
 
-        CircularProgressIndicator() // ProgressBar berbentuk lingkaran
+        // **Progress Bar (Linear)**
+        LinearProgressIndicator(
+            progress = progress,
+            modifier = Modifier
+                .width(200.dp)
+                .height(8.dp), // Atur tinggi progress bar
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }

@@ -37,7 +37,7 @@ fun AppNavHost(viewModel: DataViewModel) {
             composable("splash") {
                 SplashScreen(navController = navController)
             }
-            composable("form") {
+            composable("tambah") {
                 DataEntryScreen(navController = navController, viewModel = viewModel)
             }
             composable("profile") {
